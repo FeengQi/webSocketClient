@@ -13,16 +13,12 @@ export default class WebSockets extends Component {
   };
 
   componentDidMount() {
-    this.initWebSockets('ws://192.168.31.79:8888');
+    this.initWebSockets('ws://192.168.31.79:8888/');
   }
 
   initWebSockets = (url) => {
-    const ws = new WebSockets(url);
-    console.log(ws);
-    ws.send('');
+    const ws = new WebSocket(url);
     ws.onopen = () => {
-      ws.close();
-      // ws.send('Hello Server!');
       this.setState({
         ws,
         status: true,
@@ -30,10 +26,7 @@ export default class WebSockets extends Component {
     };
 
     ws.onmessage = (data) => {
-      console.log('我收到服务器的数据了');
-      this.setState({
-        text: data.data,
-      });
+      this.setState({ text: data.data });
     };
   };
 
@@ -41,17 +34,23 @@ export default class WebSockets extends Component {
     const { ws } = this.state;
     const { value } = e.target;
 
-    this.setState({
-      text: value,
-    });
-    // ws.send(value);
+    this.setState({ text: value });
+    ws.send(value);
   };
 
   render() {
+    const { status, text } = this.state;
     return <div>
       <Row>
         <Col span={8}/>
-        <Col span={8}><TextArea onClick={this.handleChange}/>1</Col>
+        <Col span={8}>
+          <TextArea
+            onChange={this.handleChange}
+            value={text}
+            disabled={!status}
+          />
+          {this.state.a}
+        </Col>
         <Col span={8}/>
       </Row>
     </div>;
